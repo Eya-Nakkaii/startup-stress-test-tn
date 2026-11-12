@@ -2,11 +2,9 @@ from decimal import Decimal as D
 
 import pytest
 
-from data_io import load_bct
 from diagnostic import (breakeven_of, breakeven_text, decompose, diagnose, fmt_signed, recovery_levers,
                         status_of)
 from finance import Model, calculate, demo_model, scenario_matrix, var_pct
-from ui import demand_chart_data, scenario_chart_data
 
 SHOCK = var_pct(1549800, 1426500)  # BCT avril → mai 2025
 
@@ -92,19 +90,3 @@ def test_signed_format():
     assert fmt_signed(D('1000')) == '+1 000,00 DT'
     assert fmt_signed(D('-1640')) == '−1 640,00 DT'
     assert fmt_signed(D('0')) == '0,00 DT'
-
-
-def test_scenario_chart_matches_engine():
-    results = matrix()
-    df = scenario_chart_data(results)
-    assert list(df['Scénario']) == ['Situation initiale', 'Transport augmenté', 'Demande diminuée', 'Chocs combinés']
-    assert list(df['Résultat (DT)']) == [float(r.profit) for r in results.values()] == [1000, -1000, 200, -1640]
-    assert list(df['Statut']) == ['Bénéfice', 'Perte', 'Bénéfice', 'Perte']
-
-
-def test_demand_chart_reads_csv_in_order():
-    bct = load_bct()
-    df = demand_chart_data(bct.iloc[::-1])   # même si le CSV est désordonné
-    assert list(df['label']) == ['Avril 2025', 'Mai 2025', 'Juin 2025']
-    assert list(df['transactions_electroniques']) == list(load_bct()['transactions_electroniques'])
-    assert list(df['Variation']) == ['', '-7,96 %', '-1,55 %']

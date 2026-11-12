@@ -1,6 +1,32 @@
+# Environnements virtuels
 .venv/
-.venv-1/
+.venv-*/
+venv/
+env/
+
+# Caches et fichiers compilés
 __pycache__/
+*.py[cod]
 .pytest_cache/
-*.pyc
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Secrets et configuration locale (ne jamais publier)
+.streamlit/secrets.toml
+.env
+.env.*
+*.pem
+*.key
+
+# Fichiers temporaires et système
+*.log
+*.tmp
+*.swp
+*~
 .DS_Store
+Thumbs.db
+
+# Éditeurs
+.vscode/
+.idea/

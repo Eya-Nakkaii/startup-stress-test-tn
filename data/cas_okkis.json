@@ -1,0 +1,44 @@
+{
+  "id": "okkis",
+  "nom": "Okkis",
+  "activite": "Marque tunisienne de mode, vente en ligne",
+  "verifie_le": "2026-11-12",
+  "publie": {
+    "source": {
+      "nom": "TikTak PRO — Étude de cas Okkis",
+      "url": "https://tiktakpro.com/blog/etude-de-cas-okkis-mode-tunisie",
+      "nature": "Étude de cas publiée par le prestataire (TikTak PRO) sur son propre blog ; date de publication non indiquée sur la page.",
+      "note": "La marque ne communique pas ses volumes de commandes ; la page ne donne ni chiffre d'affaires absolu, ni coûts, ni marges, ni bénéfice."
+    },
+    "panier_moyen_dt": 89,
+    "panier_moyen_note": "Montant par commande tel que publié ; TTC ou HT non précisé.",
+    "taux_confirmation": 0.84,
+    "taux_confirmation_note": "Taux de confirmation des commandes (contexte paiement à la livraison), vs 81 % de moyenne marché selon la source. Ce n'est pas un taux de livraison : il n'est pas appliqué au volume.",
+    "croissance_ca": "Chiffre d'affaires doublé en six mois"
+  },
+  "reference_transport": {
+    "source": {
+      "nom": "INTIGO — Tarifs de livraison colis en Tunisie",
+      "url": "https://intigo.net/blog/tarif-livraison-colis-tunisie/",
+      "date": "2026-10-24"
+    },
+    "unite": "DT TTC par petit colis (taille S, jusqu'à 5 kg), TVA 7 % incluse",
+    "regle": "Palier déterminé par le nombre de colis livrés et encaissés sur les 30 derniers jours.",
+    "paliers": [
+      {"min": 0, "max": 500, "prix_dt": 9.0},
+      {"min": 501, "max": 1500, "prix_dt": 8.0},
+      {"min": 1501, "max": 10000, "prix_dt": 7.0},
+      {"min": 10001, "max": null, "prix_dt": 6.5}
+    ],
+    "prix_retenu_dt": 8.0,
+    "avertissement": "Tarif public de référence, et non un contrat commercial connu d'Okkis."
+  },
+  "hypotheses": {
+    "note": "Hypothèses de démonstration modifiables. Elles ne représentent pas les finances réelles d'Okkis.",
+    "commandes_livrees": 1000,
+    "cout_produits_dt": 70,
+    "livraison_facturee_dt": 8,
+    "autres_couts_variables_dt": 8,
+    "charges_fixes_dt": 9000
+  }
+}

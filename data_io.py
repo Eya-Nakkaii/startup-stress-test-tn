@@ -5,6 +5,7 @@ Toutes les erreurs sont levées en `DataError` avec un message lisible par l'uti
 from __future__ import annotations
 
 import io
+import json
 from decimal import Decimal
 from pathlib import Path
 
@@ -115,3 +116,49 @@ def model_from_row(row) -> Model:
     return Model(int(row['commandes_livrees']), dec('panier_moyen_dt'), dec('livraison_facturee_dt'),
                  dec('cout_produits_dt'), dec('publicite_emballage_dt'), dec('cout_transport_dt'),
                  dec('charges_fixes_dt'))
+
+
+# ---------------------------------------------------------------- Cas d'étude documenté (JSON local)
+CASE_FILE = DATA_DIR / 'cas_okkis.json'
+
+
+def load_case(path: Path = CASE_FILE) -> dict:
+    """Cas d'étude : faits publiés, tarif de référence et hypothèses, séparés et validés."""
+    try:
+        case = json.loads(Path(path).read_text(encoding='utf-8'))
+    except FileNotFoundError as exc:
+        raise DataError(f'Fichier introuvable : {Path(path).name}') from exc
+    except json.JSONDecodeError as exc:
+        raise DataError(f'{Path(path).name} n’est pas un JSON valide (ligne {exc.lineno}).') from exc
+    try:
+        pub, ref, hyp = case['publie'], case['reference_transport'], case['hypotheses']
+        numbers = [pub['panier_moyen_dt'], pub['taux_confirmation'], ref['prix_retenu_dt'],
+                   *(hyp[k] for k in ('commandes_livrees', 'cout_produits_dt', 'livraison_facturee_dt',
+                                      'autres_couts_variables_dt', 'charges_fixes_dt'))]
+        _ = case['nom'], pub['source']['url'], ref['source']['url'], ref['paliers']
+    except (KeyError, TypeError) as exc:
+        raise DataError(f'Champ manquant dans {Path(path).name} : {exc}') from exc
+    if any(not isinstance(n, (int, float)) or isinstance(n, bool) or n < 0 for n in numbers):
+        raise DataError(f'Valeurs numériques invalides dans {Path(path).name}.')
+    if not 0 <= pub['taux_confirmation'] <= 1:
+        raise DataError('Le taux de confirmation doit être compris entre 0 et 1.')
+    if not float(hyp['commandes_livrees']).is_integer():
+        raise DataError('Le nombre de commandes doit être entier.')
+    return case
+
+
+def case_model(case: dict) -> Model:
+    """Modèle financier du cas : panier publié + tarif de référence + hypothèses déclarées."""
+    hyp = case['hypotheses']
+    return Model(int(hyp['commandes_livrees']), val(case['publie']['panier_moyen_dt']),
+                 val(hyp['livraison_facturee_dt']), val(hyp['cout_produits_dt']),
+                 val(hyp['autres_couts_variables_dt']), val(case['reference_transport']['prix_retenu_dt']),
+                 val(hyp['charges_fixes_dt']))
+
+
+def carrier_tier(tiers: list[dict], parcels: int) -> dict | None:
+    """Palier tarifaire correspondant à un volume de colis sur 30 jours."""
+    for t in tiers:
+        if parcels >= t['min'] and (t['max'] is None or parcels <= t['max']):
+            return t
+    return None

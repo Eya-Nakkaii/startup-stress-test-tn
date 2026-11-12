@@ -1,4 +1,5 @@
-"""Exécute l'application Streamlit sans navigateur et vérifie qu'aucune exception n'est levée."""
+"""Exécute l'application Streamlit sans navigateur : démarrage Okkis, curseurs, synchronisation, cas d'étude."""
+import re
 from pathlib import Path
 
 from streamlit.testing.v1 import AppTest
@@ -12,50 +13,83 @@ def run_app():
     return at
 
 
-def kpis(at):
-    """Valeurs des quatre cartes KPI (sous-titres colorés), dans l'ordre."""
-    return [s.value for s in at.subheader if s.value.startswith(':')][:4]
+def rerun(at):
+    """AppTest 1.50 lit la valeur d'un segmented_control comme une liste : on la fournit sous cette forme."""
+    group = at.button_group[0]
+    if group._value is None:
+        group.set_value([at.session_state['case_sel']])
+    elif not isinstance(group._value, list):
+        group.set_value([group._value])
+    at.run()
+    assert not at.exception, [e.value for e in at.exception]
+    return at
 
 
-def test_app_layout_and_reference_kpis():
+def html(at) -> str:
+    return ' '.join(h.proto.body for h in at.get('html')).replace(' ', ' ')
+
+
+def strip(at) -> list[str]:
+    """Valeurs de la bande « Synthèse financière » : résultat initial, simulé, variation, seuil."""
+    body = next(h.proto.body for h in at.get('html') if 'sttn-strip' in h.proto.body).replace(' ', ' ')
+    return [' '.join(re.sub(r'<[^>]+>', ' ', v).split()) for v in re.findall(r'sttn-kpi-value">(.*?)</div></div>', body)]
+
+
+def test_okkis_is_loaded_at_startup():
     at = run_app()
     assert not at.error
-    assert len(at.tabs) == 2
-    assert kpis(at) == [':green[+1\u00a0000,00\u00a0DT]', ':red[−1\u00a0640,00\u00a0DT]', ':red[−2\u00a0640,00\u00a0DT]', ':red[1\u00a0125]']
-    md = ' '.join(m.value for m in at.markdown)
-    assert 'Données de démonstration' in md and 'ShopTN Pilote' in md
-    assert 'de 1\u00a0000 à 920 commandes' in md
+    assert at.number_input(key='p_basket').value == 89.0
+    assert at.number_input(key='p_orders').value == 1000
+    assert at.number_input(key='p_carrier').value == 8.0
+    assert at.slider(key='s_delta').value == 2.0
+    assert at.slider(key='s_drop').value == 7.96
+    assert at.selectbox(key='s_source').value.startswith('BCT · avril → mai 2025')
+    assert strip(at) == ['+2 000 DT/mois', '−720 DT/mois', '−2 720 DT/mois', '1 000 commandes']
+    body = html(at)
+    assert 'Cas Okkis : indicateurs publics et hypothèses financières modifiables' in body
+    assert 'Il manque' in body and '>80<' in body
 
 
-def test_each_scenario_and_reset():
+def test_sliders_update_results_and_sync_source():
     at = run_app()
-    at.radio(key='s_scenario').set_value('A').run()
-    assert kpis(at)[1] == ':red[−1\u00a0000,00\u00a0DT]'
-    at.radio(key='s_scenario').set_value('B').run()
-    assert kpis(at)[1] == ':green[+200,00\u00a0DT]'
-    assert kpis(at)[3] == ':green[900]'
-    at.number_input(key='s_delta').set_value(0.0).run()
-    at.selectbox(key='s_demand').set_value('Aucune variation de demande').run()
-    assert kpis(at)[1] == ':green[+1\u00a0000,00\u00a0DT]'
-    at.button[0].click().run()   # Réinitialiser
+    at.slider(key='s_delta').set_value(0.0); rerun(at)
+    assert strip(at)[1] == '+1 120 DT/mois'                          # 920 × 11 − 9 000
+    at.slider(key='s_drop').set_value(0.0); rerun(at)
+    assert at.selectbox(key='s_source').value == 'Hypothèse personnalisée'   # curseur déplacé → hypothèse
+    assert strip(at)[1] == '+2 000 DT/mois'
+    bct_april_june = next(o for o in at.selectbox(key='s_source').options if 'avril → juin' in o)
+    at.selectbox(key='s_source').set_value(bct_april_june); rerun(at)
+    assert at.slider(key='s_drop').value == 9.38
     assert not at.exception
-    assert at.radio(key='s_scenario').value == 'C'
-    assert kpis(at)[1] == ':red[−1\u00a0640,00\u00a0DT]'
 
 
-def test_zero_margin_and_name():
+def test_editing_cells_updates_immediately():
     at = run_app()
-    at.text_input(key='startup_name').set_value('Ma Boutique').run()
-    at.number_input(key='p_product').set_value(100.0).run()
-    assert not at.exception
-    assert kpis(at)[3] == ':red[Non atteignable]'
-    assert any('Ma Boutique' in m.value for m in at.markdown)
+    at.number_input(key='p_fixed').set_value(5000.0); rerun(at)
+    assert strip(at)[0] == '+6 000 DT/mois'                          # 1 000 × 11 − 5 000
+    at.number_input(key='p_basket').set_value(95.0); rerun(at)
+    assert 'Modifié' in html(at) and 'panier moyen' in html(at)
 
 
-def test_manual_demand_drop():
+def test_switch_case_keeps_edits_and_never_invents_data():
     at = run_app()
-    at.selectbox(key='s_demand').set_value('Variation manuelle (non observée)').run()
-    at.slider(key='s_manual').set_value(50.0).run()
+    at.number_input(key='p_fixed').set_value(5000.0); rerun(at)
+    at.button_group[0].set_value(['custom']); rerun(at)
+    assert at.number_input(key='p_basket').value is None             # rien n'est inventé
+    assert any('Complétez les 7 cellules' in i.value for i in at.info)
+    at.button_group[0].set_value(['okkis']); rerun(at)
+    assert at.number_input(key='p_fixed').value == 5000.0             # modifications conservées
+    at.button[0].click(); rerun(at)                                         # Réinitialiser
+    assert at.number_input(key='p_fixed').value == 9000.0
     assert not at.exception
-    # 500 commandes × 8 DT − 9 000 DT
-    assert kpis(at)[1] == ':red[−5\u00a0000,00\u00a0DT]'
+
+
+def test_custom_case_full_entry_matches_shoptn_regression():
+    at = run_app()
+    at.button_group[0].set_value(['custom']); rerun(at)
+    for key, v in [('p_orders', 1000), ('p_basket', 58.0), ('p_product', 40.0), ('p_fee', 8.0),
+                   ('p_carrier', 8.0), ('p_other', 8.0), ('p_fixed', 9000.0)]:
+        at.number_input(key=key).set_value(v)
+        rerun(at)
+    assert not at.exception
+    assert strip(at)[:2] == ['+1 000 DT/mois', '−1 640 DT/mois']

@@ -1,0 +1,103 @@
+/* ST/TN — identité visuelle.
+ *
+ * Design system
+ *   Grille     : 12 colonnes, max 1360 px, gouttière 16 px.
+ *   Surfaces   : fond #F8F9F6 (thème) ; zones blanches obtenues par backdrop-filter (blanc pur sur le
+ *                fond clair, reste sombre en thème sombre) ; filet 1 px ; rayon 4 px ; aucune ombre.
+ *   Texte      : DM Sans 14 px ; libellés de zone IBM Plex Mono 11 px capitales ; montants IBM Plex Mono
+ *                à chiffres tabulaires.
+ *   Couleurs   : turquoise #19B8A9 / #087D76 (identité, positif) ; corail #F16E83 / #C8435A (pertes) ;
+ *                secondaire #718383. Aucune couleur de texte ni de fond imposée ailleurs : le thème décide.
+ * Sélecteurs : uniquement des classes `st-key-*` (clés données dans app.py) et des data-testid.
+ */
+
+:root {
+  --sttn-teal: #19B8A9;
+  --sttn-teal-ink: #087D76;
+  --sttn-coral: #F16E83;
+  --sttn-coral-ink: #C8435A;
+  --sttn-muted: #718383;
+  --sttn-rule: rgba(113, 131, 131, .28);
+  --sttn-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ---- Page */
+.block-container { padding: 2.9rem 1.5rem 2.5rem; max-width: 1360px; }
+[data-testid="stHeader"] { background: transparent; }
+[data-testid="stVerticalBlock"] { gap: .75rem; }
+
+/* ---- Zones (surfaces de travail) */
+[class*="st-key-zone"] {
+  backdrop-filter: brightness(1.05);
+  -webkit-backdrop-filter: brightness(1.05);
+  border-radius: 4px;
+}
+.sttn-zone {
+  font-family: var(--sttn-mono); font-size: 11px; font-weight: 500; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--sttn-muted);
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+}
+.sttn-zone b { color: var(--sttn-teal-ink); font-weight: 600; }
+.sttn-zone span:last-child { text-transform: none; letter-spacing: 0; font-family: "DM Sans", sans-serif; font-size: 12px; }
+
+/* ---- En-tête */
+.sttn-brand { display: flex; align-items: center; gap: 14px; height: 40px; }
+.sttn-mark {
+  font-family: var(--sttn-mono); font-weight: 600; font-size: 15px; letter-spacing: .02em;
+  border: 1.5px solid currentColor; padding: 3px 8px 2px; border-radius: 3px; line-height: 1.2;
+}
+.sttn-mark i { font-style: normal; color: var(--sttn-teal); padding: 0 1px; }
+.sttn-title { font-size: 15px; font-weight: 500; }
+.sttn-title small { display: block; font-size: 11.5px; color: var(--sttn-muted); font-weight: 400; margin-top: 1px; }
+
+/* ---- Grille du modèle : cellules de travail */
+[class*="st-key-zone-model"] [data-testid="stNumberInput"] input {
+  font-family: var(--sttn-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 13.5px;
+}
+[class*="st-key-zone-model"] [data-testid="stNumberInputStepUp"],
+[class*="st-key-zone-model"] [data-testid="stNumberInputStepDown"] { display: none; }
+[class*="st-key-zone-model"] [data-testid="stWidgetLabel"] p,
+[class*="st-key-zone-lab"] [data-testid="stWidgetLabel"] p { font-size: 12px; }
+.sttn-cell-ro { font-family: var(--sttn-mono); font-variant-numeric: tabular-nums; font-size: 13.5px;
+  text-align: right; padding: 7px 10px; border: 1px dashed var(--sttn-rule); border-radius: 4px; }
+.sttn-cell-ro-label { font-size: 12px; margin-bottom: 6px; }
+.sttn-legend { font-size: 11.5px; color: var(--sttn-muted); }
+.sttn-legend b { font-family: var(--sttn-mono); font-weight: 500; color: var(--sttn-teal-ink); }
+
+/* ---- Stress Lab : la valeur est lue sous le curseur (format français), pas sur la poignée */
+[class*="st-key-zone-lab"] [data-testid="stSliderThumbValue"],
+[class*="st-key-zone-lab"] [data-testid="stSliderTickBar"] { display: none; }
+/* Groupes de milliers dans les montants en chasse fixe : espace fine plutôt qu'une cellule entière */
+.g { display: inline-block; width: .3em; }
+.sttn-readout { font-family: var(--sttn-mono); font-variant-numeric: tabular-nums; font-size: 20px;
+  font-weight: 500; line-height: 1.1; margin-top: -6px; }
+.sttn-readout small { font-size: 11.5px; color: var(--sttn-muted); font-weight: 400; margin-left: 8px; }
+.sttn-up { color: var(--sttn-coral-ink); }
+.sttn-down { color: var(--sttn-coral-ink); }
+.sttn-zero { color: var(--sttn-muted); }
+
+/* ---- Bande d'indicateurs */
+.sttn-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.sttn-kpi { padding: 2px 20px; border-left: 1px solid var(--sttn-rule); min-width: 0; }
+.sttn-kpi:first-child { border-left: 0; padding-left: 2px; }
+.sttn-kpi-label { font-size: 12px; color: var(--sttn-muted); display: flex; justify-content: space-between; gap: 8px; }
+.sttn-kpi-value { font-family: var(--sttn-mono); font-variant-numeric: tabular-nums; font-size: 26px;
+  font-weight: 500; letter-spacing: -.01em; line-height: 1.25; white-space: nowrap; }
+.sttn-kpi-value small { font-size: 12px; color: var(--sttn-muted); font-weight: 400; margin-left: 4px; letter-spacing: 0; }
+.sttn-pos { color: var(--sttn-teal-ink); }
+.sttn-neg { color: var(--sttn-coral-ink); }
+.sttn-tag { font-family: var(--sttn-mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase;
+  padding: 1px 6px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap; }
+
+/* ---- Diagnostic */
+.sttn-diag { font-size: 14px; line-height: 1.5; }
+.sttn-diag p { margin: 0 0 6px; }
+.sttn-diag .sttn-num { font-family: var(--sttn-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+.sttn-note { font-size: 11.5px; color: var(--sttn-muted); }
+
+@media (max-width: 760px) {
+  .sttn-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
+  .sttn-kpi:nth-child(3) { border-left: 0; padding-left: 2px; }
+  .sttn-kpi-value { font-size: 21px; }
+  .block-container { padding-left: 1rem; padding-right: 1rem; }
+}

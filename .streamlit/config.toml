@@ -1,38 +1,40 @@
-# Thème « fintech » clair par défaut. Le code n'impose aucune couleur de texte ni de fond :
-# le thème sombre natif (menu ⋮ → Settings) reste entièrement lisible.
+# ST/TN — thème clair par défaut. Aucune couleur de texte n'est imposée dans le code :
+# le thème sombre natif (⋮ → Settings → Dark) reste lisible.
 
 [theme]
 base = "light"
-primaryColor = "#2563EB"
-backgroundColor = "#F5F7FB"
-secondaryBackgroundColor = "#EEF2F8"
-textColor = "#15243B"
-linkColor = "#2563EB"
-borderColor = "#E2E8F0"
-dataframeBorderColor = "#E2E8F0"
+primaryColor = "#19B8A9"
+backgroundColor = "#F8F9F6"
+secondaryBackgroundColor = "#F1F5F3"
+textColor = "#183638"
+linkColor = "#087D76"
+borderColor = "#DCE6E2"
+dataframeBorderColor = "#DCE6E2"
+dataframeHeaderBackgroundColor = "#F8F9F6"
 showWidgetBorder = true
-baseRadius = "0.6rem"
-buttonRadius = "0.5rem"
-font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap, sans-serif"
-headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap, sans-serif"
-headingFontWeights = [700, 650, 600, 600, 600, 600]
-blueColor = "#2563EB"
-greenColor = "#16A34A"
-redColor = "#DC2626"
-orangeColor = "#D97706"
-grayColor = "#64748B"
-greenTextColor = "#15803D"
-redTextColor = "#DC2626"
-orangeTextColor = "#B45309"
-blueTextColor = "#1D4ED8"
-grayTextColor = "#64748B"
-chartCategoricalColors = ["#2563EB", "#15243B", "#16A34A", "#DC2626", "#D97706"]
-
-[theme.sidebar]
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F5F7FB"
-borderColor = "#E2E8F0"
+baseRadius = "4px"
+buttonRadius = "4px"
+baseFontSize = 14
+font = "DM Sans:https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap, sans-serif"
+headingFont = "DM Sans:https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap, sans-serif"
+codeFont = "IBM Plex Mono:https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap, monospace"
+headingFontWeights = [600, 600, 600, 600, 500, 500]
+headingFontSizes = ["1.5rem", "1.25rem", "1.05rem", "0.95rem", "0.9rem", "0.85rem"]
+greenColor = "#19B8A9"
+greenTextColor = "#087D76"
+greenBackgroundColor = "#E3F5F2"
+redColor = "#F16E83"
+redTextColor = "#C8435A"
+redBackgroundColor = "#FDE9EC"
+orangeColor = "#D9A13B"
+orangeTextColor = "#9A6B12"
+blueColor = "#19B8A9"
+blueTextColor = "#087D76"
+grayColor = "#718383"
+grayTextColor = "#718383"
+chartCategoricalColors = ["#19B8A9", "#F16E83", "#087D76", "#718383"]
 
 [client]
 showErrorDetails = true
 toolbarMode = "viewer"
+showSidebarNavigation = false
