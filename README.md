@@ -35,10 +35,17 @@ Ouvrir `http://localhost:8501`. Arrêter avec `Ctrl+C`. Ou double-cliquer sur `l
 
 ## Structure
 
-- `app.py` : interface Streamlit (A. Présentation, B. Données tunisiennes, C. Simulations, D. Diagnostic).
-- `finance.py` : moteur de calcul (Decimal, sans arrondi intermédiaire).
+- `app.py` : tableau de bord Streamlit — en-tête, 4 KPI, **Diagnostic de résistance financière**, 2 graphiques,
+  onglet « Données & méthodologie », export du diagnostic ; paramètres et stress tests dans la barre latérale.
+- `finance.py` : moteur de calcul (Decimal, sans arrondi intermédiaire) — inchangé dans ses règles.
+- `diagnostic.py` : statut (signe du résultat), décomposition exacte effet volume / effet marge, seuil, coussin
+  de sécurité, pistes chiffrées de retour à l'équilibre.
+- `ui.py` : cartes KPI et graphiques Altair (aucune couleur de texte imposée : thèmes clair et sombre).
+- `report.py` : rapport HTML imprimable (« Télécharger le diagnostic » → Imprimer → Enregistrer en PDF).
 - `data_io.py` : chargement et validation des CSV, messages d'erreur explicites.
-- `tests/` : tests du moteur, des données et de l'application (Streamlit AppTest).
+- `.streamlit/config.toml` : thème fintech clair (Inter, bleu marine / bleu électrique). Le thème sombre reste
+  disponible via ⋮ → Settings → Dark.
+- `tests/` : moteur, données, diagnostic, rapport et application (Streamlit AppTest).
 
 ## Résultats attendus — hypothèses de démonstration
 

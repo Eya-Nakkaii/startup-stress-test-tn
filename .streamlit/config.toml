@@ -1,7 +1,38 @@
-# Thème clair par défaut ; l'interface n'impose aucune couleur et reste lisible en thème sombre.
+# Thème « fintech » clair par défaut. Le code n'impose aucune couleur de texte ni de fond :
+# le thème sombre natif (menu ⋮ → Settings) reste entièrement lisible.
+
 [theme]
 base = "light"
-primaryColor = "#2a78d6"
+primaryColor = "#2563EB"
+backgroundColor = "#F5F7FB"
+secondaryBackgroundColor = "#EEF2F8"
+textColor = "#15243B"
+linkColor = "#2563EB"
+borderColor = "#E2E8F0"
+dataframeBorderColor = "#E2E8F0"
+showWidgetBorder = true
+baseRadius = "0.6rem"
+buttonRadius = "0.5rem"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap, sans-serif"
+headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap, sans-serif"
+headingFontWeights = [700, 650, 600, 600, 600, 600]
+blueColor = "#2563EB"
+greenColor = "#16A34A"
+redColor = "#DC2626"
+orangeColor = "#D97706"
+grayColor = "#64748B"
+greenTextColor = "#15803D"
+redTextColor = "#DC2626"
+orangeTextColor = "#B45309"
+blueTextColor = "#1D4ED8"
+grayTextColor = "#64748B"
+chartCategoricalColors = ["#2563EB", "#15243B", "#16A34A", "#DC2626", "#D97706"]
+
+[theme.sidebar]
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F5F7FB"
+borderColor = "#E2E8F0"
 
 [client]
 showErrorDetails = true
+toolbarMode = "viewer"
