@@ -1,0 +1,7 @@
+# Thème clair par défaut ; l'interface n'impose aucune couleur et reste lisible en thème sombre.
+[theme]
+base = "light"
+primaryColor = "#2a78d6"
+
+[client]
+showErrorDetails = true
